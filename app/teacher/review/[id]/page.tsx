@@ -17,7 +17,6 @@ import {
   Undo,
   Trash2,
 } from "lucide-react";
-import { set } from "mongoose";
 
 const DUMMY_COURSES = [
   "Mastering Ratios & Proportions",
