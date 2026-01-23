@@ -4,7 +4,6 @@ import AppShell from "@/components/AppShell";
 import LmsCard from "@/components/LmsCard";
 import { useLms } from "@/context/LmsContext";
 import { BookOpen, Pencil, Calendar } from "lucide-react";
-import LinkButton from "@/components/ui/LinkButton";
 
 export default function StudentDashboard() {
   const { student } = useLms();

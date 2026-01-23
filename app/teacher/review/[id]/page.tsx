@@ -17,6 +17,17 @@ import {
   Undo,
   Trash2,
 } from "lucide-react";
+import { set } from "mongoose";
+
+const DUMMY_COURSES = [
+  "Mastering Ratios & Proportions",
+  "Pre-Algebra: Solving for x",
+  "Integer Operations & Number Lines",
+  "Geometry: Angles and Area",
+  "Data Analytics & Probability Basics",
+  "Decimals, Percents, and Fractions",
+  "Coordinate Plane Foundations",
+];
 
 const QUESTIONS = [
   {
@@ -42,6 +53,27 @@ const QUESTIONS = [
 export default function TeacherReview() {
   const { student, updateStudent } = useLms();
   const router = useRouter();
+  const [selectedCourse, setSelectedCourse] = useState(
+    student.recommendedCourse || DUMMY_COURSES[1]
+  );
+  const [selectedCourseSentence, setSelectedCourseSentence] = useState("");
+  // const getRecSentence = (course: string) =>
+  //   `Based on this assessment, the AI recommends that the student next take ${course} to strengthen foundational skills.`;
+
+  // Logic to update the summary text when the dropdown changes
+  // const handleCourseChange = (newCourse: string) => {
+  //   setSelectedCourse(newCourse);
+  //   const oldSentence = getRecSentence(selectedCourse);
+  //   const newSentence = getRecSentence(newCourse);
+
+  //   if (localFinal.includes(oldSentence)) {
+  //     setLocalFinal(localFinal.replace(oldSentence, newSentence));
+  //   } else {
+  //     setLocalFinal((prev) =>
+  //       prev ? `${prev}\n\n${newSentence}` : newSentence
+  //     );
+  //   }
+  // };
 
   const [localFeedback, setLocalFeedback] = useState<Record<string, string>>(
     student.perQuestionFeedback || {}
@@ -63,10 +95,16 @@ export default function TeacherReview() {
 
   const handleAiGeneration = async () => {
     setIsAiLoading(true);
-    const data = await getTeacherFeedback(needsReview, student.quizAnswers);
+    const data = await getTeacherFeedback(
+      needsReview,
+      student.quizAnswers,
+      DUMMY_COURSES
+    );
     if (data) {
       setLocalFeedback((prev) => ({ ...prev, ...data.perQuestion }));
       setLocalFinal(data.finalSummary);
+      setSelectedCourse(data.recommendedLessonIndex);
+      setSelectedCourseSentence(data.recommendedLessonSentence);
     }
     setIsAiLoading(false);
   };
@@ -77,6 +115,7 @@ export default function TeacherReview() {
         student.reviewStatus === "pending" ? "published" : "pending",
       perQuestionFeedback: localFeedback,
       finalTeacherFeedback: localFinal,
+      recommendedCourse: selectedCourse, // Save the course
     });
     if (student.reviewStatus === "pending") router.push("/teacher");
   };
@@ -251,7 +290,32 @@ export default function TeacherReview() {
             </div>
           )}
         </section>
-
+        <div className="pt-10 space-y-6">
+          <section>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              Recommended Next Class (AI Suggestion)
+            </label>
+            <p className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
+              {selectedCourseSentence}
+            </p>
+            <div className="relative inline-block w-full max-w-md">
+              <select
+                defaultValue={selectedCourse}
+                className="w-full appearance-none bg-white border-2 border-slate-200 rounded-xl px-4 py-3 pr-10 font-medium focus:border-indigo-500 outline-none transition-all"
+              >
+                {DUMMY_COURSES.map((course) => (
+                  <option key={course} value={course}>
+                    {course}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={20}
+              />
+            </div>
+          </section>
+        </div>
         {/* FINAL SUMMARY CARD */}
         <div className="pt-10">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">

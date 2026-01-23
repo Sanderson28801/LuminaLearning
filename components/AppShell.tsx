@@ -47,7 +47,7 @@ const Footer = () => (
   </footer>
 );
 
-export default function AppShell({ children, role }: AppShellProps) {
+export default function AppShell({ children, role = null }: AppShellProps) {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[var(--bg-page)]">
       <Navbar role={role} />

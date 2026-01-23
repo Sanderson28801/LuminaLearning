@@ -9,8 +9,9 @@ export type Student = {
   mcScore: number | null;
   quizStatus: "not_started" | "submitted";
   reviewStatus: "pending" | "published";
-  perQuestionFeedback: Record<string, string>; // ID to Feedback string
+  perQuestionFeedback: Record<string, string>;
   finalTeacherFeedback: string;
+  recommendedCourse: string;
 };
 
 const initialState: Student = {
@@ -23,6 +24,7 @@ const initialState: Student = {
   reviewStatus: "pending",
   perQuestionFeedback: {},
   finalTeacherFeedback: "",
+  recommendedCourse: "Intro to Algebra",
 };
 
 const LmsContext = createContext<
