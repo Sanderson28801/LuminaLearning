@@ -56,23 +56,6 @@ export default function TeacherReview() {
     student.recommendedCourse || DUMMY_COURSES[1]
   );
   const [selectedCourseSentence, setSelectedCourseSentence] = useState("");
-  // const getRecSentence = (course: string) =>
-  //   `Based on this assessment, the AI recommends that the student next take ${course} to strengthen foundational skills.`;
-
-  // Logic to update the summary text when the dropdown changes
-  // const handleCourseChange = (newCourse: string) => {
-  //   setSelectedCourse(newCourse);
-  //   const oldSentence = getRecSentence(selectedCourse);
-  //   const newSentence = getRecSentence(newCourse);
-
-  //   if (localFinal.includes(oldSentence)) {
-  //     setLocalFinal(localFinal.replace(oldSentence, newSentence));
-  //   } else {
-  //     setLocalFinal((prev) =>
-  //       prev ? `${prev}\n\n${newSentence}` : newSentence
-  //     );
-  //   }
-  // };
 
   const [localFeedback, setLocalFeedback] = useState<Record<string, string>>(
     student.perQuestionFeedback || {}
@@ -102,7 +85,8 @@ export default function TeacherReview() {
     if (data) {
       setLocalFeedback((prev) => ({ ...prev, ...data.perQuestion }));
       setLocalFinal(data.finalSummary);
-      setSelectedCourse(data.recommendedLessonIndex);
+      console.log(data.recommendedLessonIndex);
+      setSelectedCourse(DUMMY_COURSES[data.recommendedLessonIndex]);
       setSelectedCourseSentence(data.recommendedLessonSentence);
     }
     setIsAiLoading(false);
@@ -294,12 +278,13 @@ export default function TeacherReview() {
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Recommended Next Class (AI Suggestion)
             </label>
-            <p className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
+            <p className="text-sm font-medium text-slate-700  mr-4 py-2">
               {selectedCourseSentence}
             </p>
             <div className="relative inline-block w-full max-w-md">
               <select
-                defaultValue={selectedCourse}
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
                 className="w-full appearance-none bg-white border-2 border-slate-200 rounded-xl px-4 py-3 pr-10 font-medium focus:border-indigo-500 outline-none transition-all"
               >
                 {DUMMY_COURSES.map((course) => (
